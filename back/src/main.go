@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"back/src/handlers"
 	"back/src/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
@@ -37,9 +39,18 @@ func main() {
 }
 
 func initNeo4j() (neo4j.Driver, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+
 	return neo4j.NewDriver(
-		"bolt://localhost:7687",
-		neo4j.BasicAuth("neo4j", "password123", ""),
+		dbHost,
+		neo4j.BasicAuth(dbUser, dbPassword, ""),
 	)
 }
 
