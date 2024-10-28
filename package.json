@@ -4,12 +4,13 @@
   "version": "0.1.0",
   "scripts": {
     "start:vite": "cd front && yarn dev",
-    "start:go": "cd back && go run main.go",
+    "start:go": "cd back && air",
     "start:native": "cd app && yarn start",
     "open:android": "cd app && yarn android",
     "start:neo4j": "cd data && docker-compose up -d",
     "stop:neo4j": "cd data && docker-compose down",
-    "start": "concurrently -n vite,go,native,neo4j,android -c green,magenta,cyan,blue,green \"yarn start:vite\" \"yarn start:go\" \"yarn start:native\" \"yarn start:neo4j\" \"yarn open:android\"",
+    "start:web": "concurrently -n vite,go,neo4j -c green,magenta,blue \"yarn start:vite\" \"yarn start:go\" \"yarn start:neo4j\"",
+    "start:mobile": "concurrently -n native,android -c cyan,green \"yarn start:native\" \"yarn open:android\"",
     "stop": "concurrently -n neo4j -c blue \"yarn stop:neo4j\""
     },
   "devDependencies": {
