@@ -1,9 +1,11 @@
 version: '3'
 services:
   neo4j:
-    image: neo4j:latest
+    build:
+      context: .  # Path to the directory containing your .Dockerfile
+      dockerfile: .Dockerfile  # Specify the Dockerfile name
     environment:
-      - NEO4J_AUTH=neo4j/password123  # Change username/password as needed
+      - NEO4J_AUTH=${NEO4J_AUTH}  # Use variable from .env file
     ports:
       - 7474:7474  # Neo4j Browser
       - 7687:7687  # Bolt protocol for app connections
