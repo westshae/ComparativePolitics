@@ -40,7 +40,7 @@ func main() {
 }
 
 func initNeo4j() (neo4j.Driver, error) {
-	err := godotenv.Load("../src/.env")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
