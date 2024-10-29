@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "start:vite": "cd front && yarn dev",
-    "start:go": "cd back && air",
+    "start:go": "cd back/src && air",
     "start:native": "cd app && yarn start",
     "open:android": "cd app && yarn android",
     "start:neo4j": "cd data && docker-compose up -d",

@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"back/src/handlers"
-	"back/src/services"
+	"back/src/user/handler"
+	"back/src/user/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -24,7 +24,7 @@ func main() {
 	userService := services.NewUserService(driver)
 
 	// Initialize handlers
-	userHandler := handlers.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService)
 
 	// Create a new Fiber app
 	app := fiber.New()
@@ -33,13 +33,14 @@ func main() {
 	app.Get("/", homeHandler)
 	app.Get("/user", userHandler.GetUser)
 	app.Post("/user", userHandler.CreateUser)
+	app.Post("/login", userHandler.Login)
 
 	// Start server on port 5000
 	app.Listen(":5000")
 }
 
 func initNeo4j() (neo4j.Driver, error) {
-	err := godotenv.Load()
+	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
