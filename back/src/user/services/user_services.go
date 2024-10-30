@@ -77,7 +77,7 @@ func (s *UserService) RegisterUser(email string, password string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("registration failed: %w", err)
 	}
-	fmt.Println("New user registered in: %s", user.Email)
+	fmt.Printf("New user registered in: %s", user.Email)
 
 	return user.Email, nil
 }
