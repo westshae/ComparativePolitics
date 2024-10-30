@@ -77,14 +77,9 @@ func (s *UserService) RegisterUser(email string, password string) (string, error
 	if err != nil {
 		return "", fmt.Errorf("registration failed: %w", err)
 	}
-	fmt.Println("New user logged in: %w", user.Email)
+	fmt.Println("New user registered in: %s", user.Email)
 
-	session, err := client.Auth.SignInWithEmailPassword(email, password)
-	if err != nil {
-		return "", fmt.Errorf("signin failed: %w", err)
-	}
-
-	return session.AccessToken, nil
+	return user.Email, nil
 }
 
 // ValidateJWT checks if the JWT is valid

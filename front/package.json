@@ -13,6 +13,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "postcss": "^8.4.47",
+    "qs": "^6.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/qs": "^6.9.16",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.5.0",

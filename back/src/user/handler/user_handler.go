@@ -35,7 +35,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	}
 
 	// Attempt to register the user with Supabase
-	token, err := h.userService.RegisterUser(register.Email, register.Password)
+	email, err := h.userService.RegisterUser(register.Email, register.Password)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "could not create Supabase user: " + err.Error()})
 	}
@@ -50,10 +50,9 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "could not create graph user: " + err.Error()})
 	}
 
-	// Return the created user along with the JWT token
 	return c.Status(201).JSON(fiber.Map{
-		"user":  user,
-		"token": token, // Include the JWT token if needed
+		"username": user.Name,
+		"email":    email,
 	})
 }
 
