@@ -22,13 +22,6 @@ func NewUserService(driver neo4j.Driver) *UserService {
 	}
 }
 
-func (s *UserService) GetUser() (*models.User, error) {
-	// This is just a sample implementation
-	return &models.User{
-		Name: "John Doe",
-	}, nil
-}
-
 func (s *UserService) CreateGraphUser(user *models.User) error {
 	session := s.driver.NewSession(neo4j.SessionConfig{DatabaseName: "neo4j"})
 	defer session.Close()
@@ -60,7 +53,6 @@ func (s *UserService) SigninUser(email string, password string) (string, error) 
 	return session.AccessToken, nil
 }
 
-// RegisterUser registers a new user and returns the JWT token
 func (s *UserService) RegisterUser(email string, password string) (string, error) {
 	client, err := supabase.NewClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_ANON_KEY"), &supabase.ClientOptions{})
 	if err != nil {
@@ -72,7 +64,6 @@ func (s *UserService) RegisterUser(email string, password string) (string, error
 		Password: password,
 	}
 
-	// Call the SignUp method to register a new user
 	user, err := client.Auth.Signup(signupRequest)
 	if err != nil {
 		return "", fmt.Errorf("registration failed: %w", err)
@@ -82,14 +73,10 @@ func (s *UserService) RegisterUser(email string, password string) (string, error
 	return user.Email, nil
 }
 
-// ValidateJWT checks if the JWT is valid
 func ValidateJWT(tokenString string) (bool, error) {
-	// You need to replace `your-jwt-signing-key` with your actual signing key
 	secretKey := []byte(os.Getenv("JWT_KEY"))
 
-	// Parse the JWT
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Validate the algorithm
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -100,6 +87,5 @@ func ValidateJWT(tokenString string) (bool, error) {
 		return false, fmt.Errorf("invalid token: %w", err)
 	}
 
-	// Check if the token is valid
 	return token.Valid, nil
 }

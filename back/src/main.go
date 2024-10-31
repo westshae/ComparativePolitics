@@ -39,7 +39,6 @@ func main() {
 
 	// Routes
 	app.Get("/", homeHandler)
-	app.Get("/user", userHandler.GetUser)
 	app.Post("/register", userHandler.CreateUser)
 	app.Post("/login", userHandler.Login)
 

@@ -4,6 +4,8 @@ import (
 	"back/src/user/models"
 	"back/src/user/services"
 
+	"regexp"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,14 +19,6 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 	}
 }
 
-func (h *UserHandler) GetUser(c *fiber.Ctx) error {
-	user, err := h.userService.GetUser()
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "could not get user"})
-	}
-	return c.JSON(user)
-}
-
 // CreateUser creates a new user
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	var register models.Register
@@ -34,20 +28,25 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
-	// Attempt to register the user with Supabase
+	if !isValidEmail(register.Email) {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid email address format. Please use ___@___.___"})
+	}
+
+	if !isValidPassword((register.Password)) {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid password format. Must be 10+ characters long, have at least 1 Uppercase, at least 1 Lowercase, and at least 1 number."})
+	}
+
 	email, err := h.userService.RegisterUser(register.Email, register.Password)
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "could not create Supabase user: " + err.Error()})
+		return c.Status(400).JSON(fiber.Map{"error": "Registeration Error: Please contact the owner of the site."})
 	}
 
 	user := models.User{
 		Name: register.Name,
 	}
 
-	// If Supabase user creation is successful, proceed to create the graph user
 	if err := h.userService.CreateGraphUser(&user); err != nil {
-		// Optional: You may want to handle the case where Graph user creation fails
-		return c.Status(500).JSON(fiber.Map{"error": "could not create graph user: " + err.Error()})
+		return c.Status(500).JSON(fiber.Map{"error": "Registeration Error: Please contact the owner of the site."})
 	}
 
 	return c.Status(201).JSON(fiber.Map{
@@ -56,23 +55,45 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	})
 }
 
-// Login handler to authenticate the user
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 	var login models.Login
 
-	// Parse the request body into the user struct
 	if err := c.BodyParser(&login); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
-	// Attempt to sign in the user with Supabase
-	token, err := h.userService.SigninUser(login.Email, login.Password)
-	if err != nil {
-		return c.Status(401).JSON(fiber.Map{"error": "invalid credentials: " + err.Error()})
+	if !isValidEmail(login.Email) {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid email address format. Please use ___@___.___"})
 	}
 
-	// Return the authenticated user along with the JWT token
+	if !isValidPassword((login.Password)) {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid password format. Must be 10+ characters long, have at least 1 Uppercase, at least 1 Lowercase, and at least 1 number."})
+	}
+
+	token, err := h.userService.SigninUser(login.Email, login.Password)
+	if err != nil {
+		return c.Status(401).JSON(fiber.Map{"error": "invalid credentials"})
+	}
+
 	return c.Status(200).JSON(fiber.Map{
-		"token": token, // Include the JWT token for authenticated access
+		"token": token,
 	})
+}
+
+func isValidEmail(email string) bool {
+	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	re := regexp.MustCompile(emailRegex)
+	return re.MatchString(email)
+}
+
+func isValidPassword(password string) bool {
+	if len(password) < 10 {
+		return false
+	}
+
+	hasLower := regexp.MustCompile(`[a-z]`).MatchString(password)
+	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
+	hasDigit := regexp.MustCompile(`\d`).MatchString(password)
+
+	return hasLower && hasUpper && hasDigit
 }
