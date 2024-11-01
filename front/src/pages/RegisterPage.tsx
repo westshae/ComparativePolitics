@@ -1,7 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -71,6 +74,7 @@ const RegisterPage = () => {
       <div className={`${showEmailConfirmation ? 'visible' : 'invisible'}`}>
         <h1>Registeration requires confirmation.</h1>
         <p>Check your inbox at {email} for a confirmation email.</p>
+        <button onClick={() => navigate("/login")}>Login</button>
       </div>
 
       <div className={`${showError ? 'visible' : 'invisible'}`}>
