@@ -17,21 +17,27 @@ func NewUserHandler(userService *question_services.QuestionService) *QuestionHan
 	}
 }
 
-// func (h *QuestionHandler) GetUser(c *fiber.Ctx) error {
-// 	name := c.Query("name")
-// 	if name == "" {
-// 		return c.Status(400).JSON(fiber.Map{"error": "name parameter is required"})
-// 	}
+func (h *QuestionHandler) GetAllQuestions(c *fiber.Ctx) error {
+	user, err := h.questionService.GetAllQuestions()
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Failed to get all questions"})
+	}
 
-// 	user, err := h.questionService.GetGraphUser(name)
-// 	if err != nil {
-// 		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
-// 	}
+	return c.Status(200).JSON(fiber.Map{
+		"questions": user,
+	})
+}
 
-// 	return c.Status(200).JSON(fiber.Map{
-// 		"name": user.Name,
-// 	})
-// }
+func (h *QuestionHandler) GetAllSides(c *fiber.Ctx) error {
+	user, err := h.questionService.GetAllSides()
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Failed to get all sides"})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"sides": user,
+	})
+}
 
 func (h *QuestionHandler) CreateSide(c *fiber.Ctx) error {
 	var sideRequest question_models.SideRequest

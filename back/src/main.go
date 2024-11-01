@@ -48,6 +48,8 @@ func main() {
 	app.Post("/register", userHandler.CreateUser)
 	app.Post("/login", userHandler.Login)
 
+	app.Get("/questions", questionHandler.GetAllQuestions)
+	app.Get("/sides", questionHandler.GetAllSides)
 	app.Post("/createSide", questionHandler.CreateSide)
 	app.Post("/createQuestion", questionHandler.CreateQuestion)
 
