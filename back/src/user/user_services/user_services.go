@@ -1,10 +1,10 @@
-package services
+package user_services
 
 import (
 	"fmt"
 	"os"
 
-	"back/src/user/models"
+	"back/src/user/user_models"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
@@ -22,7 +22,41 @@ func NewUserService(driver neo4j.Driver) *UserService {
 	}
 }
 
-func (s *UserService) CreateGraphUser(user *models.User) error {
+func (s *UserService) GetGraphUser(name string) (*user_models.User, error) {
+	// Start a new session
+	session := s.driver.NewSession(neo4j.SessionConfig{DatabaseName: "neo4j"})
+	defer session.Close()
+
+	// Run the MATCH query to retrieve the user by name
+	result, err := session.Run(
+		"MATCH (u:User {name: $name}) RETURN u",
+		map[string]interface{}{"name": name},
+	)
+	if err != nil {
+		return nil, fmt.Errorf("could not find user: %w", err)
+	}
+
+	if result.Next() {
+		record := result.Record()
+		node, ok := record.Get("u")
+		if !ok {
+			return nil, fmt.Errorf("user not found")
+		}
+
+		userNode := node.(neo4j.Node)
+		userName := userNode.Props["name"].(string)
+
+		return &user_models.User{Name: userName}, nil
+	}
+
+	if err = result.Err(); err != nil {
+		return nil, fmt.Errorf("error retrieving user: %w", err)
+	}
+
+	return nil, fmt.Errorf("user not found")
+}
+
+func (s *UserService) CreateGraphUser(user *user_models.User) error {
 	session := s.driver.NewSession(neo4j.SessionConfig{DatabaseName: "neo4j"})
 	defer session.Close()
 

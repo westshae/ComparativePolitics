@@ -1,8 +1,8 @@
-package handler
+package user_handler
 
 import (
-	"back/src/user/models"
-	"back/src/user/services"
+	"back/src/user/user_models"
+	"back/src/user/user_services"
 
 	"regexp"
 
@@ -10,20 +10,34 @@ import (
 )
 
 type UserHandler struct {
-	userService *services.UserService
+	userService *user_services.UserService
 }
 
-func NewUserHandler(userService *services.UserService) *UserHandler {
+func NewUserHandler(userService *user_services.UserService) *UserHandler {
 	return &UserHandler{
 		userService: userService,
 	}
 }
 
-// CreateUser creates a new user
-func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
-	var register models.Register
+func (h *UserHandler) GetUser(c *fiber.Ctx) error {
+	name := c.Query("name")
+	if name == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "name parameter is required"})
+	}
 
-	// Parse the request body into the user struct
+	user, err := h.userService.GetGraphUser(name)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"name": user.Name,
+	})
+}
+
+func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
+	var register user_models.Register
+
 	if err := c.BodyParser(&register); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
@@ -41,7 +55,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Registeration Error: Please contact the owner of the site."})
 	}
 
-	user := models.User{
+	user := user_models.User{
 		Name: register.Name,
 	}
 
@@ -56,7 +70,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) Login(c *fiber.Ctx) error {
-	var login models.Login
+	var login user_models.Login
 
 	if err := c.BodyParser(&login); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})

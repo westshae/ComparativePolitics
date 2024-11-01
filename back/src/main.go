@@ -4,8 +4,10 @@ import (
 	"log"
 	"os"
 
-	"back/src/user/handler"
-	"back/src/user/services"
+	"back/src/question/question_handler"
+	"back/src/question/question_services"
+	"back/src/user/user_handler"
+	"back/src/user/user_services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -21,11 +23,13 @@ func main() {
 	}
 	defer driver.Close()
 
-	// Initialize services
-	userService := services.NewUserService(driver)
+	userService := user_services.NewUserService(driver)
+	userHandler := user_handler.NewUserHandler(userService)
 
-	// Initialize handlers
-	userHandler := handler.NewUserHandler(userService)
+	questionService := question_services.NewQuestionService(driver)
+	questionHandler := question_handler.NewUserHandler(questionService)
+
+	// questionService :=
 
 	// Create a new Fiber app
 	app := fiber.New()
@@ -39,8 +43,13 @@ func main() {
 
 	// Routes
 	app.Get("/", homeHandler)
+
+	app.Get("/user", userHandler.GetUser)
 	app.Post("/register", userHandler.CreateUser)
 	app.Post("/login", userHandler.Login)
+
+	app.Post("/createSide", questionHandler.CreateSide)
+	app.Post("/createQuestion", questionHandler.CreateQuestion)
 
 	// Start server on port 5000
 	log.Fatal(app.Listen(":5000"))
