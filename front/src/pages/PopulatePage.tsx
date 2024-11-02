@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface Question {
   combiner: string;
@@ -16,8 +15,6 @@ interface Side {
 }
 
 const PopulatePage = () => {
-  const navigate = useNavigate();
-
   const [statement, setStatement] = useState<string>("");
   const [combiner, setCombiner] = useState<string>("");
   const [leftSideId, setLeftSideId] = useState<string>("");
@@ -116,10 +113,11 @@ const PopulatePage = () => {
             <th>Question ID</th>
             <th>Right Side ID</th>
             <th>Right Statement</th>
+            <th>Question Itself</th>
           </tr>
         </thead>
         <tbody>
-          {questions.map((item, index) => (
+          {questions && questions.map((item, index) => (
             <tr key={index}>
               <td>{item.combiner}</td>
               <td>{item.leftSideID}</td>
@@ -127,6 +125,7 @@ const PopulatePage = () => {
               <td>{item.questionID}</td>
               <td>{item.rightSideID}</td>
               <td>{item.rightStatement}</td>
+              <td>{item.leftStatement} {item.combiner} {item.rightStatement}</td>
             </tr>
           ))}
         </tbody>
@@ -140,7 +139,7 @@ const PopulatePage = () => {
           </tr>
         </thead>
         <tbody>
-          {sides.map((item, index) => (
+          {sides && sides.map((item, index) => (
             <tr key={index}>
               <td>{item.sideID}</td>
               <td>{item.statement}</td>

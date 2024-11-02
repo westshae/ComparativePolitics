@@ -52,6 +52,7 @@ func main() {
 	app.Get("/sides", questionHandler.GetAllSides)
 	app.Post("/createSide", questionHandler.CreateSide)
 	app.Post("/createQuestion", questionHandler.CreateQuestion)
+	app.Post("/createAnswer", questionHandler.CreateAnswer)
 
 	// Start server on port 5000
 	log.Fatal(app.Listen(":5000"))

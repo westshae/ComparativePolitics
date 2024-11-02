@@ -74,3 +74,21 @@ func (h *QuestionHandler) CreateQuestion(c *fiber.Ctx) error {
 		"id": id,
 	})
 }
+
+func (h *QuestionHandler) CreateAnswer(c *fiber.Ctx) error {
+	var answerRequest question_models.AnswerRequest
+
+	if err := c.BodyParser(&answerRequest); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})
+	}
+
+	id, err := h.questionService.CreateAnswer(answerRequest.Username, answerRequest.QuestionId, answerRequest.Preferred, answerRequest.Unpreferred)
+
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Unable to create answer"})
+	}
+
+	return c.Status(201).JSON(fiber.Map{
+		"id": id,
+	})
+}
