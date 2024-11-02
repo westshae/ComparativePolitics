@@ -6,7 +6,6 @@ type SideRequest struct {
 
 type AnswerRequest struct {
 	Username    string `json:"username"`
-	QuestionId  string `json:"questionid"`
 	Preferred   string `json:"preferred"`
 	Unpreferred string `json:"unpreferred"`
 }

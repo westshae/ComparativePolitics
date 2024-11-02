@@ -68,7 +68,7 @@ func (h *QuestionHandler) CreateAnswer(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
-	id, err := h.questionService.CreateAnswer(answerRequest.Username, answerRequest.QuestionId, answerRequest.Preferred, answerRequest.Unpreferred)
+	id, err := h.questionService.CreateAnswer(answerRequest.Username, answerRequest.Preferred, answerRequest.Unpreferred)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Unable to create answer"})

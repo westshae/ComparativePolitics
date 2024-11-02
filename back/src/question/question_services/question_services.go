@@ -105,23 +105,20 @@ func (s *QuestionService) GetAllSides() ([]map[string]interface{}, error) {
 	return sides, nil
 }
 
-func (s *QuestionService) CreateAnswer(userName string, questionID string, preferredSideID string, unpreferredSideID string) (int64, error) {
+func (s *QuestionService) CreateAnswer(userName string, preferredSideID string, unpreferredSideID string) (int64, error) {
 	session := s.driver.NewSession(neo4j.SessionConfig{DatabaseName: "neo4j"})
 	defer session.Close()
 
 	result, err := session.Run(
 		`MATCH (u:User {name: $userName})
-		 MATCH (q:Question) WHERE id(q) = toInteger($questionID)
 		 MATCH (preferred:Side) WHERE id(preferred) = toInteger($preferredSideID)
 		 MATCH (unpreferred:Side) WHERE id(unpreferred) = toInteger($unpreferredSideID)
 		 CREATE (a:Answer)-[:ANSWERED]->(u)
-		 CREATE (a)-[:QUESTION]->(q)
 		 CREATE (a)-[:PREFERRED]->(preferred)
 		 CREATE (a)-[:UNPREFERRED]->(unpreferred)
 		 RETURN id(a) AS answerID`,
 		map[string]interface{}{
 			"userName":          userName,
-			"questionID":        questionID,
 			"preferredSideID":   preferredSideID,
 			"unpreferredSideID": unpreferredSideID,
 		},
