@@ -2,7 +2,6 @@ package question_services
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
@@ -41,85 +40,36 @@ func (s *QuestionService) CreateSide(statement string) (int64, error) {
 	return 0, fmt.Errorf("could not retrieve side ID")
 }
 
-func (s *QuestionService) CreateQuestion(combiner string, leftSide string, rightSide string) (int64, error) {
+func (s *QuestionService) GetQuestion() (int64, string, int64, string, error) {
 	session := s.driver.NewSession(neo4j.SessionConfig{DatabaseName: "neo4j"})
 	defer session.Close()
 
-	leftSideID, err := strconv.ParseInt(leftSide, 10, 64)
-	if err != nil {
-		return 0, fmt.Errorf("invalid leftSide ID: %w", err)
-	}
-
-	rightSideID, err := strconv.ParseInt(rightSide, 10, 64)
-	if err != nil {
-		return 0, fmt.Errorf("invalid rightSide ID: %w", err)
-	}
-
 	result, err := session.Run(
-		`CREATE (q:Question {combiner: $combiner}) 
-		 WITH q
-		 MATCH (s1:Side) WHERE id(s1) = $leftSideID
-		 MATCH (s2:Side) WHERE id(s2) = $rightSideID
-		 CREATE (q)-[:LEFT_SIDE]->(s1) 
-		 CREATE (q)-[:RIGHT_SIDE]->(s2)
-		 RETURN id(q) AS questionId`,
-		map[string]interface{}{
-			"combiner":    combiner,
-			"leftSideID":  leftSideID,
-			"rightSideID": rightSideID,
-		},
-	)
-	if err != nil {
-		return 0, fmt.Errorf("could not create question: %w", err)
-	}
-	fmt.Printf("%s", result.Record())
-	if result.Next() {
-		sideID := result.Record().GetByIndex(0).(int64)
-		return sideID, nil
-	}
-
-	fmt.Println("Error below??")
-	return 0, fmt.Errorf("could not retrieve question ID")
-}
-
-func (s *QuestionService) GetAllQuestions() ([]map[string]interface{}, error) {
-	session := s.driver.NewSession(neo4j.SessionConfig{DatabaseName: "neo4j"})
-	defer session.Close()
-
-	// Run the query to get questions with their associated sides
-	result, err := session.Run(
-		`MATCH (q:Question)-[:LEFT_SIDE]->(left:Side), 
-		       (q)-[:RIGHT_SIDE]->(right:Side) 
-		 RETURN id(q) AS questionID, q.combiner AS combiner,
-		        id(left) AS leftSideID, left.statement AS leftStatement,
-		        id(right) AS rightSideID, right.statement AS rightStatement`,
+		`MATCH (s:Side) 
+		 WITH s ORDER BY rand() 
+		 RETURN id(s) AS sideId, s.statement AS statement LIMIT 2`,
 		nil,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("could not retrieve questions: %w", err)
+		return 0, "", 0, "", fmt.Errorf("could not retrieve random sides: %w", err)
 	}
 
-	// Collect results into a slice
-	var questions []map[string]interface{}
+	// Collect the two side IDs and statements
+	var sideIDs []int64
+	var statements []string
 	for result.Next() {
-		record := result.Record()
-		question := map[string]interface{}{
-			"questionID":     record.GetByIndex(0),
-			"combiner":       record.GetByIndex(1),
-			"leftSideID":     record.GetByIndex(2),
-			"leftStatement":  record.GetByIndex(3),
-			"rightSideID":    record.GetByIndex(4),
-			"rightStatement": record.GetByIndex(5),
-		}
-		questions = append(questions, question)
+		sideID := result.Record().GetByIndex(0).(int64)
+		statement := result.Record().GetByIndex(1).(string)
+		sideIDs = append(sideIDs, sideID)
+		statements = append(statements, statement)
 	}
 
-	// Check for any errors after iterating
-	if err = result.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating through results: %w", err)
+	// Ensure we have exactly two sides
+	if len(sideIDs) != 2 || len(statements) != 2 {
+		return 0, "", 0, "", fmt.Errorf("could not retrieve two unique sides")
 	}
 
-	return questions, nil
+	return sideIDs[0], statements[0], sideIDs[1], statements[1], nil
 }
 
 func (s *QuestionService) GetAllSides() ([]map[string]interface{}, error) {

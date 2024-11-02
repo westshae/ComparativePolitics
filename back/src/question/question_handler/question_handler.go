@@ -17,17 +17,6 @@ func NewUserHandler(userService *question_services.QuestionService) *QuestionHan
 	}
 }
 
-func (h *QuestionHandler) GetAllQuestions(c *fiber.Ctx) error {
-	user, err := h.questionService.GetAllQuestions()
-	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "Failed to get all questions"})
-	}
-
-	return c.Status(200).JSON(fiber.Map{
-		"questions": user,
-	})
-}
-
 func (h *QuestionHandler) GetAllSides(c *fiber.Ctx) error {
 	user, err := h.questionService.GetAllSides()
 	if err != nil {
@@ -57,21 +46,18 @@ func (h *QuestionHandler) CreateSide(c *fiber.Ctx) error {
 	})
 }
 
-func (h *QuestionHandler) CreateQuestion(c *fiber.Ctx) error {
-	var questionRequest question_models.QuestionRequest
-
-	if err := c.BodyParser(&questionRequest); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "cannot parse JSON"})
-	}
-
-	id, err := h.questionService.CreateQuestion(questionRequest.Combiner, questionRequest.LeftSideId, questionRequest.RightSideId)
+func (h *QuestionHandler) GetQuestion(c *fiber.Ctx) error {
+	leftId, leftStatement, rightId, rightStatement, err := h.questionService.GetQuestion()
 
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Unable to create question"})
+		return c.Status(400).JSON(fiber.Map{"error": "Unable to get question"})
 	}
 
 	return c.Status(201).JSON(fiber.Map{
-		"id": id,
+		"leftId":         leftId,
+		"leftStatement":  leftStatement,
+		"rightId":        rightId,
+		"rightStatement": rightStatement,
 	})
 }
 
