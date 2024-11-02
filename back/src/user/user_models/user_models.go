@@ -1,7 +1,8 @@
 package user_models
 
 type User struct {
-	Name string `json:"name"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 
 type Login struct {

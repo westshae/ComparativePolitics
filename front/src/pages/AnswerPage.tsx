@@ -17,7 +17,7 @@ const AnswerPage = () => {
     setQuestion(null)
     setPreferred("")
     setUnpreferred("")
-    
+
     const backend_url = import.meta.env.VITE_BACKEND_URL;
     if (backend_url) {
       axios.get(backend_url + "/question")
@@ -42,8 +42,12 @@ const AnswerPage = () => {
 
   const handleAnswerSubmit = async () => {
     const backend_url = import.meta.env.VITE_BACKEND_URL;
+    const username = localStorage.getItem("name")
+    if(!username){
+      return;
+    }
     const formData = new FormData();
-    formData.append("username", "McGhee");
+    formData.append("username", username);
     formData.append("preferred", preferred);
     formData.append("unpreferred", unpreferred);
 

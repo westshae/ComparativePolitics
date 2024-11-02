@@ -28,7 +28,6 @@ const RegisterPage = () => {
 
   const onPasswordCheckChange = (passwordCheck: string) => {
     setPasswordCheck(passwordCheck);
-    console.log(email !== "" && username !== "" && password !== "" && password == passwordCheck)
   }
 
   const handleRegister = async () => {

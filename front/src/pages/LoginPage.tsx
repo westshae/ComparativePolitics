@@ -25,6 +25,8 @@ const LoginPage = () => {
     if(backend_url){
       axios.post(backend_url + "/login", formData).then((response) => {
         localStorage.setItem("token", response.data.token)
+        localStorage.setItem("email", response.data.email)
+        localStorage.setItem("name", response.data.name)
         navigate("/")
       })
       .catch((error) => {
@@ -35,7 +37,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <h1>Register</h1>
+      <h1>Login</h1>
       <label htmlFor="email">Email:</label>
       <input id="email" placeholder="Enter email here..." onChange={(event) => onEmailChange(event.target.value)}></input>
 

@@ -3,6 +3,7 @@ package user_handler
 import (
 	"back/src/user/user_models"
 	"back/src/user/user_services"
+	"fmt"
 
 	"regexp"
 
@@ -25,7 +26,7 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "name parameter is required"})
 	}
 
-	user, err := h.userService.GetGraphUser(name)
+	user, err := h.userService.GetGraphUserViaName(name)
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
 	}
@@ -56,7 +57,8 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	}
 
 	user := user_models.User{
-		Name: register.Name,
+		Name:  register.Name,
+		Email: register.Email,
 	}
 
 	if err := h.userService.CreateGraphUser(&user); err != nil {
@@ -84,12 +86,16 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid password format. Must be 10+ characters long, have at least 1 Uppercase, at least 1 Lowercase, and at least 1 number."})
 	}
 
-	token, err := h.userService.SigninUser(login.Email, login.Password)
+	token, user, err := h.userService.SigninUser(login.Email, login.Password)
+	fmt.Println(token)
+	fmt.Println(user)
 	if err != nil {
 		return c.Status(401).JSON(fiber.Map{"error": "invalid credentials"})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
+		"email": user.Email,
+		"name":  user.Name,
 		"token": token,
 	})
 }
