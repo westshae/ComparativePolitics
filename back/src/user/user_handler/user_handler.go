@@ -3,7 +3,6 @@ package user_handler
 import (
 	"back/src/user/user_models"
 	"back/src/user/user_services"
-	"fmt"
 
 	"regexp"
 
@@ -87,8 +86,6 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	}
 
 	token, user, err := h.userService.SigninUser(login.Email, login.Password)
-	fmt.Println(token)
-	fmt.Println(user)
 	if err != nil {
 		return c.Status(401).JSON(fiber.Map{"error": "invalid credentials"})
 	}
