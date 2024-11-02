@@ -113,7 +113,7 @@ func (s *QuestionService) CreateAnswer(userName string, preferredSideID string, 
 		`MATCH (u:User {name: $userName})
 		 MATCH (preferred:Side) WHERE id(preferred) = toInteger($preferredSideID)
 		 MATCH (unpreferred:Side) WHERE id(unpreferred) = toInteger($unpreferredSideID)
-		 CREATE (a:Answer)-[:ANSWERED]->(u)
+		 CREATE (u)-[:ANSWERED]->(a:Answer)
 		 CREATE (a)-[:PREFERRED]->(preferred)
 		 CREATE (a)-[:UNPREFERRED]->(unpreferred)
 		 RETURN id(a) AS answerID`,
