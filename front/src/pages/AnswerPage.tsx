@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Content from "../components/Content";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 interface Question {
   leftStatement: string;
@@ -66,18 +69,23 @@ const AnswerPage = () => {
 
   return (
     <>
-      <h1>Pick your preferred statement</h1>
-      {question &&
-        <div>
-          <label htmlFor="left">Choice 1:</label>
-          <button id="left" onClick={() => handleChoice(question.leftId, question.rightId)}>{question?.leftStatement}</button>
+      <Header />
+      <Content>
+        <h1>Pick your preferred statement</h1>
+        {question &&
+          <div>
+            <label htmlFor="left">Choice 1:</label>
+            <button id="left" onClick={() => handleChoice(question.leftId, question.rightId)}>{question?.leftStatement}</button>
 
-          <label htmlFor="right">Choice 2:</label>
-          <button id="right" onClick={() => handleChoice(question.rightId, question.leftId)}>{question?.rightStatement}</button>
+            <label htmlFor="right">Choice 2:</label>
+            <button id="right" onClick={() => handleChoice(question.rightId, question.leftId)}>{question?.rightStatement}</button>
 
-          <button disabled={preferred === "" || unpreferred === ""} onClick={() => handleAnswerSubmit()}>Submit answer</button>
-        </div>
-      }
+            <button disabled={preferred === "" || unpreferred === ""} onClick={() => handleAnswerSubmit()}>Submit answer</button>
+          </div>
+        }
+      </Content>
+      <Footer />
+
     </>
   );
 }

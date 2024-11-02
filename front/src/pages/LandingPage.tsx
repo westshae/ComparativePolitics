@@ -1,7 +1,15 @@
+import Content from "../components/Content";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+
 const LandingPage = () => {
   return (
     <>
-      <h1>Landing</h1>
+      <Header />
+      <Content>
+        <h1>Landing</h1>
+      </Content>
+      <Footer />
     </>
   );
 }

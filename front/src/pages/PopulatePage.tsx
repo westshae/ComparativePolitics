@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Content from "../components/Content";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 interface Side {
   statement: string;
@@ -43,28 +46,34 @@ const PopulatePage = () => {
 
   return (
     <>
-      <h1>Add new statement</h1>
-      <label htmlFor="statement">Statement:</label>
-      <input id="statement" placeholder="Enter statement here..." onChange={(event) => setStatement(event.target.value)}></input>
+      <Header />
+      <Content>
 
-      <button disabled={statement === ""} onClick={() => handleSideSubmit()}>Submit new statement</button>
+        <h1>Add new statement</h1>
+        <label htmlFor="statement">Statement:</label>
+        <input id="statement" placeholder="Enter statement here..." onChange={(event) => setStatement(event.target.value)}></input>
 
-      <table>
-        <thead>
-          <tr>
-            <th>SideID</th>
-            <th>Statement</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sides && sides.map((item, index) => (
-            <tr key={index}>
-              <td>{item.sideID}</td>
-              <td>{item.statement}</td>
+        <button disabled={statement === ""} onClick={() => handleSideSubmit()}>Submit new statement</button>
+
+        <table>
+          <thead>
+            <tr>
+              <th>SideID</th>
+              <th>Statement</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sides && sides.map((item, index) => (
+              <tr key={index}>
+                <td>{item.sideID}</td>
+                <td>{item.statement}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Content>
+      <Footer />
+
     </>
   );
 }

@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Content from "../components/Content";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -55,32 +58,36 @@ const RegisterPage = () => {
 
   return (
     <>
-      <h1>Register</h1>
-      <label htmlFor="email">Email:</label>
-      <input id="email" placeholder="Enter email here..." onChange={(event) => onEmailChange(event.target.value)}></input>
+      <Header />
+      <Content>
 
-      <label htmlFor="username">Username:</label>
-      <input id="username" placeholder="Enter username here..." onChange={(event) => onUsernameChange(event.target.value)}></input>
+        <h1>Register</h1>
+        <label htmlFor="email">Email:</label>
+        <input id="email" placeholder="Enter email here..." onChange={(event) => onEmailChange(event.target.value)}></input>
 
-      <label htmlFor="password">Password:</label>
-      <input id="password" placeholder="Enter password here..." onChange={(event) => onPasswordChange(event.target.value)}></input>
+        <label htmlFor="username">Username:</label>
+        <input id="username" placeholder="Enter username here..." onChange={(event) => onUsernameChange(event.target.value)}></input>
 
-      <label htmlFor="passwordCheck">Confirm:</label>
-      <input id="passwordCheck" placeholder="Confirm password here..." onChange={(event) => onPasswordCheckChange(event.target.value)}></input>
+        <label htmlFor="password">Password:</label>
+        <input id="password" placeholder="Enter password here..." onChange={(event) => onPasswordChange(event.target.value)}></input>
 
-      <button disabled={email === "" || username === "" || password === "" || password !== passwordCheck} onClick={() => handleRegister()}>Register</button>
+        <label htmlFor="passwordCheck">Confirm:</label>
+        <input id="passwordCheck" placeholder="Confirm password here..." onChange={(event) => onPasswordCheckChange(event.target.value)}></input>
 
-      <div className={`${showEmailConfirmation ? 'visible' : 'invisible'}`}>
-        <h1>Registeration requires confirmation.</h1>
-        <p>Check your inbox at {email} for a confirmation email.</p>
-        <button onClick={() => navigate("/login")}>Login</button>
-      </div>
+        <button disabled={email === "" || username === "" || password === "" || password !== passwordCheck} onClick={() => handleRegister()}>Register</button>
 
-      <div className={`${showError ? 'visible' : 'invisible'}`}>
-        <h1>Oops, looks like you ran into an error when registering</h1>
-        <p>{registerationError}</p>
-      </div>
+        <div className={`${showEmailConfirmation ? 'visible' : 'invisible'}`}>
+          <h1>Registeration requires confirmation.</h1>
+          <p>Check your inbox at {email} for a confirmation email.</p>
+          <button onClick={() => navigate("/login")}>Login</button>
+        </div>
 
+        <div className={`${showError ? 'visible' : 'invisible'}`}>
+          <h1>Oops, looks like you ran into an error when registering</h1>
+          <p>{registerationError}</p>
+        </div>
+      </Content>
+      <Footer />
     </>
   );
 }

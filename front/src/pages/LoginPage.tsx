@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Content from "../components/Content";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -37,14 +40,19 @@ const LoginPage = () => {
 
   return (
     <>
-      <h1>Login</h1>
-      <label htmlFor="email">Email:</label>
-      <input id="email" placeholder="Enter email here..." onChange={(event) => onEmailChange(event.target.value)}></input>
+      <Header />
+      <Content>
+        <h1>Login</h1>
+        <label htmlFor="email">Email:</label>
+        <input id="email" placeholder="Enter email here..." onChange={(event) => onEmailChange(event.target.value)}></input>
 
-      <label htmlFor="password">Password:</label>
-      <input id="password" placeholder="Enter password here..." onChange={(event) => onPasswordChange(event.target.value)}></input>
+        <label htmlFor="password">Password:</label>
+        <input id="password" placeholder="Enter password here..." onChange={(event) => onPasswordChange(event.target.value)}></input>
 
-      <button disabled={email === "" || password === ""} onClick={() => handleLogin()}>Login</button>
+        <button disabled={email === "" || password === ""} onClick={() => handleLogin()}>Login</button>
+      </Content>
+      <Footer />
+
     </>
   );
 }
