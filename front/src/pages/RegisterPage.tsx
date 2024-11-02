@@ -40,16 +40,16 @@ const RegisterPage = () => {
     formData.append("password", password);
     formData.append("name", username);
 
-    if(backend_url){
+    if (backend_url) {
       axios.post(backend_url + "/register", formData).then((_response) => {
         setShowEmailConfirmation(true);
       })
-      .catch((error) => {
-        setShowError(true);
-        setRegisterationError(error.response.data.error);
-        console.log(error)
-        console.log(error.response.data.error)
-      })
+        .catch((error) => {
+          setShowError(true);
+          setRegisterationError(error.response.data.error);
+          console.log(error)
+          console.log(error.response.data.error)
+        })
     }
   }
 

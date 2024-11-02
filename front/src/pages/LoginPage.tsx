@@ -22,16 +22,16 @@ const LoginPage = () => {
     formData.append("email", email);
     formData.append("password", password);
 
-    if(backend_url){
+    if (backend_url) {
       axios.post(backend_url + "/login", formData).then((response) => {
         localStorage.setItem("token", response.data.token)
         localStorage.setItem("email", response.data.email)
         localStorage.setItem("name", response.data.name)
         navigate("/")
       })
-      .catch((error) => {
-        console.log(error)
-      })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }
 

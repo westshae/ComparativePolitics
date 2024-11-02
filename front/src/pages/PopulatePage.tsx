@@ -31,12 +31,12 @@ const PopulatePage = () => {
 
     if (backend_url) {
       axios.post(backend_url + "/createSide", formData)
-      .then((response)=>{
-        console.log(response.data)
-      })
-      .catch((err)=>{
-        console.log(err)
-      })
+        .then((response) => {
+          console.log(response.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 

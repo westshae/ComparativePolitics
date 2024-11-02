@@ -123,7 +123,7 @@ func (s *UserService) SigninUser(email string, password string) (string, *user_m
 
 	user, err := s.GetGraphUserViaEmail(email)
 	if err != nil {
-		return "", nil, fmt.Errorf("Failed to get user from DB: %w", err)
+		return "", nil, fmt.Errorf("failed to get user from db: %w", err)
 	}
 
 	return session.AccessToken, user, nil
