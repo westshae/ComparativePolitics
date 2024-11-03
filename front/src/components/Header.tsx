@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
-
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
@@ -11,30 +10,44 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("name")
-    localStorage.removeItem("email")
-    setLoggedIn(false)
-  }
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
+    setLoggedIn(false);
+    navigate("/")
+  };
 
   return (
-    <div>
-      <button onClick={() => navigate("/")}>Home</button>
-      {loggedIn &&
-        <>
-          <button onClick={() => navigate("/populate")}>Populate</button>
-          <button onClick={() => navigate("/answer")}>Answers</button>
-          <button onClick={() => handleLogout()}>Logout</button>
-        </>
-      }
-      {!loggedIn &&
-        <>
-          <button onClick={() => navigate("/login")}>Login</button>
-          <button onClick={() => navigate("/register")}>Register</button>
-        </>
-      }
+    <div className="header-container">
+      <button className="nav-button" onClick={() => navigate("/")}>
+        Home
+      </button>
+      <div className="nav-group">
+        {loggedIn ? (
+          <>
+            <button className="nav-button" onClick={() => navigate("/populate")}>
+              Populate
+            </button>
+            <button className="nav-button" onClick={() => navigate("/answer")}>
+              Answers
+            </button>
+            <button className="nav-button nav-button-secondary" onClick={() => handleLogout()}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="nav-button nav-button-primary" onClick={() => navigate("/authenticate")}>
+              Login
+            </button>
+            <button className="nav-button nav-button-secondary" onClick={() => navigate("/authenticate")}>
+              Register
+            </button>
+          </>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

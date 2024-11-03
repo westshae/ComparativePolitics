@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Content from "../components/Content";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 
 interface Question {
   leftStatement: string;
@@ -17,35 +15,34 @@ const AnswerPage = () => {
   const [unpreferred, setUnpreferred] = useState<string>("");
 
   const getNewQuestion = async () => {
-    setQuestion(null)
-    setPreferred("")
-    setUnpreferred("")
+    setQuestion(null);
+    setPreferred("");
+    setUnpreferred("");
 
     const backend_url = import.meta.env.VITE_BACKEND_URL;
     if (backend_url) {
       axios.get(backend_url + "/question")
         .then((response) => {
-          setQuestion(response.data)
+          setQuestion(response.data);
         })
         .catch((error) => {
-          console.log(error)
-        })
+          console.log(error);
+        });
     }
-  }
+  };
 
   useEffect(() => {
     getNewQuestion();
-  }, [])
+  }, []);
 
   const handleChoice = (preferredId: string, unpreferredId: string) => {
-    setPreferred(preferredId)
-    setUnpreferred(unpreferredId)
-  }
-
+    setPreferred(preferredId);
+    setUnpreferred(unpreferredId);
+  };
 
   const handleAnswerSubmit = async () => {
     const backend_url = import.meta.env.VITE_BACKEND_URL;
-    const username = localStorage.getItem("name")
+    const username = localStorage.getItem("name");
     if (!username) {
       return;
     }
@@ -57,37 +54,55 @@ const AnswerPage = () => {
     if (backend_url) {
       axios.post(backend_url + "/createAnswer", formData)
         .then((response) => {
-          console.log(response.data)
-          getNewQuestion()
+          console.log(response.data);
+          getNewQuestion();
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     }
-  }
-
+  };
 
   return (
-    <>
-      <Header />
-      <Content>
-        <h1>Pick your preferred statement</h1>
-        {question &&
-          <div>
-            <label htmlFor="left">Choice 1:</label>
-            <button id="left" onClick={() => handleChoice(question.leftId, question.rightId)}>{question?.leftStatement}</button>
+    <Content>
+      <div className="page-container">
+        <h1 className="page-title">Pick Your Preferred Statement</h1>
+        {question && (
+          <div className="choice-group">
+            <label htmlFor="left" className="choice-label">Choice 1:</label>
+            <button
+              id="left"
+              onClick={() => handleChoice(question.leftId, question.rightId)}
+              className={`choice-button ${
+                preferred === question.leftId ? "choice-button-selected" : ""
+              }`}
+            >
+              {question.leftStatement}
+            </button>
 
-            <label htmlFor="right">Choice 2:</label>
-            <button id="right" onClick={() => handleChoice(question.rightId, question.leftId)}>{question?.rightStatement}</button>
+            <label htmlFor="right" className="choice-label">Choice 2:</label>
+            <button
+              id="right"
+              onClick={() => handleChoice(question.rightId, question.leftId)}
+              className={`choice-button ${
+                preferred === question.rightId ? "choice-button-selected" : ""
+              }`}
+            >
+              {question.rightStatement}
+            </button>
 
-            <button disabled={preferred === "" || unpreferred === ""} onClick={() => handleAnswerSubmit()}>Submit answer</button>
+            <button
+              className="submit-button"
+              disabled={preferred === "" || unpreferred === ""}
+              onClick={handleAnswerSubmit}
+            >
+              Submit Answer
+            </button>
           </div>
-        }
-      </Content>
-      <Footer />
-
-    </>
+        )}
+      </div>
+    </Content>
   );
-}
+};
 
 export default AnswerPage;
